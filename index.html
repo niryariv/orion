@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-130322193-1"></script>
+	<!-- <script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'UA-130322193-1');
+	</script> -->
+
+	<title>עזרא אוריון</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" /> -->
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>
+
+	<script src="Leaflet.MakiMarkers.js"></script>
+
+	<script src="papaparse.min.js"></script>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.65.1/dist/L.Control.Locate.min.css" />
+	<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.65.1/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+
+		#map {
+			height: 100%; width: 100vw;
+		}
+
+		*:focus {
+		    outline: 0;
+		}
+
+		.leaflet-popup-content-wrapper {
+			direction: rtl;
+		  font-size:16px;
+		  line-height:24px;
+			text-align: right;
+	  }
+
+		.title {
+			font-weight: bold;
+		}
+
+		.nav-link {
+			text-align: center;
+		}
+
+		.icon-image {
+			background-color: #fff;
+			padding: 4px;
+			border-radius:50px;
+		}
+
+	</style>
+</head>
+<body>
+
+<div id='map'></div>
+
+<script>
+
+	var map = L.map('map');//.setView([33.01,35.26], 11);//.setMaxBounds([[33.2,35.01],[32.7,35.39]]);
+
+	var markers = L.featureGroup();
+
+	L.MakiMarkers.accessToken = "pk.eyJ1IjoibmlyeWFyaXYiLCJhIjoiQjdJeWdqZyJ9.pZOwn6stABGoptmp0DH1wg";
+
+	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+	    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+	    id: 'mapbox.satellite',
+	    accessToken: 'pk.eyJ1IjoibmlyeWFyaXYiLCJhIjoiQjdJeWdqZyJ9.pZOwn6stABGoptmp0DH1wg'
+	}).addTo(map);
+
+	L.control.locate({
+		onLocationError: function(control){return false;}
+	}).addTo(map);
+
+
+	Papa.parse(
+		"https://docs.google.com/spreadsheets/d/e/2PACX-1vT0sEo1rxF4M-irewIk--Ik1s7xYtyPUwSmr4VVTlUEWnQMhcGgV5JkZHEQm4Atq36JZg7mvRTBUS7n/pub?output=csv",
+		{
+			download: true,
+			header: true,
+			complete: function(results) {
+				results.data.forEach(add_point);
+				map.fitBounds(markers.getBounds(), {padding: [20,20]});
+				markers.addTo(map);
+			}
+		}
+	);
+
+
+
+	function add_point(p){
+		console.log(p);
+
+		var i = L.MakiMarkers.icon({
+			icon: "monument",
+			color: "#DD996A",
+			size: "l"});
+
+		var i = L.icon({
+			iconUrl: p.photo,
+			iconSize:	[40, 40],
+			className: "icon-image"
+		});
+
+		var waze = "https://waze.com/ul?ll="+p.lat+","+p.lon+"&z=10&navigate=yes";
+		var text = '<a class="title" target="_blank" href="'+p.url+'">'+p.name+"</a><br />\n<p>"+p.description+"</p>\n";
+		text += '<p class="nav-link"><a href="'+waze+'">נווט עם ווייז</a></p>';
+
+		m = L.marker([p.lat, p.lon], {icon: i}).bindPopup(text);
+		markers.addLayer(m);
+	}
+
+</script>
+</body>
+</html>
