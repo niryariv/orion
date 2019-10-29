@@ -2,14 +2,6 @@
 <html>
 <head>
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-130322193-1"></script>
-	<!-- <script>
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
-
-	  gtag('config', 'UA-130322193-1');
-	</script> -->
-
 	<title>עזרא אוריון</title>
 
 	<meta charset="utf-8" />
@@ -19,12 +11,10 @@
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css" integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA==" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js" integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA==" crossorigin=""></script>
-
-	<script src="Leaflet.MakiMarkers.js"></script>
+	<script src="leaflet-providers.js"></script>
 
 	<script src="papaparse.min.js"></script>
 
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.65.1/dist/L.Control.Locate.min.css" />
 	<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.65.1/dist/L.Control.Locate.min.js" charset="utf-8"></script>
 
@@ -72,17 +62,10 @@
 
 <script>
 
-	var map = L.map('map');//.setView([33.01,35.26], 11);//.setMaxBounds([[33.2,35.01],[32.7,35.39]]);
-
+	var map = L.map('map');
 	var markers = L.featureGroup();
 
-	L.MakiMarkers.accessToken = "pk.eyJ1IjoibmlyeWFyaXYiLCJhIjoiQjdJeWdqZyJ9.pZOwn6stABGoptmp0DH1wg";
-
-	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-	    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-	    id: 'mapbox.satellite',
-	    accessToken: 'pk.eyJ1IjoibmlyeWFyaXYiLCJhIjoiQjdJeWdqZyJ9.pZOwn6stABGoptmp0DH1wg'
-	}).addTo(map);
+	L.tileLayer.provider('OpenMapSurfer.Roads').addTo(map);
 
 	L.control.locate({
 		onLocationError: function(control){return false;}
@@ -106,11 +89,6 @@
 
 	function add_point(p){
 		console.log(p);
-
-		var i = L.MakiMarkers.icon({
-			icon: "monument",
-			color: "#DD996A",
-			size: "l"});
 
 		var i = L.icon({
 			iconUrl: p.photo,
